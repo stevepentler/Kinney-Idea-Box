@@ -27,4 +27,29 @@ class Api::V1::IdeasControllerTest < ActionController::TestCase
       assert idea["quality"]
     end
   end
+
+  test 'show action responds to json' do 
+    id = ideas(:one).id
+
+    get :show, id: id, format: :json
+    assert_equal id, json_response["id"]
+  end
+
+  test '#create adds an additional idea to the database' do 
+    assert_difference 'Idea.count', 1 do 
+      idea = {title: "New Idea", body: "Something"}
+
+      post :create, idea: idea, format: :json
+    end
+  end
+
+  test '#create returns the new idea' do 
+    idea = {title: "New Idea", body: "Something"}
+
+    post :create, idea: idea, format: :json 
+
+    assert_equal idea[:title], json_response["title"]
+    assert_equal idea[:body], json_response["body"]
+    assert_equal "swill", json_response["quality"]
+  end
 end
